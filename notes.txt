@@ -1,0 +1,34 @@
+ better-auth
+ ===========
+
+ - installation
+    -- npm install better-auth
+
+- .env (secret key)
+    -- generate it at better-auth website
+    -- setting base-url
+
+- creating a better-auth instance
+    -- lib/auth.ts
+
+- configuring the database (inside auth.ts file)
+
+- creating database tables
+    -- npx auth@latest generate (this command will generate the models based on auth.ts file configuration)
+    -- inside schema.prisma, the above command will generate models named user, session, account, verification along with your book model 
+
+- create new migrations (because of new models added in the schema.prisma)
+- create new prisma client (npx prisma generate)
+
+- inside auth.ts add
+    -- emailAndPassword: {enabled: true}
+
+- mount handler
+    -- app/api/auth/[...all]/route.ts
+    -- in route.ts , copy paste code from better auth
+
+- create client instance
+    -- lib/auth-client.ts (paste code form BA)
+
+------------------------------------------------------
+
