@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { Button, buttonVariants } from "./ui/button";
+import { buttonVariants } from "./ui/button";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { SignOutButton } from "./sign-out-button";
 
 const links = [
   { label: "Home", href: "/" },
@@ -31,7 +32,7 @@ export default async function Navbar() {
         <div className="flex items-center gap-2">
           {/* session */}
           {session ? (
-            <Button>Sign out</Button>
+            <SignOutButton />
           ) : (
             <>
               <Link href="/sign-in" className={linkClassBtn}>

@@ -1,5 +1,9 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { Field, FieldError, FieldLabel, FieldSet } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import { toast } from "@/components/ui/toast";
 import { authClient } from "@/lib/auth-client";
 import { useForm } from "@tanstack/react-form";
@@ -7,14 +11,19 @@ import { useRouter } from "next/navigation";
 import z from "zod";
 
 // schema
-const formSchema = z.object({
-  name: z.string().min(1, "name is required"),
-  email: z.email("invalid email"),
-  password: z
-    .string()
-    .min(4, "password needs to be at least 4 characters long"),
-  confirmPassword: z.string(),
-});
+const formSchema = z
+  .object({
+    name: z.string().min(1, "name is required"),
+    email: z.email("invalid email"),
+    password: z
+      .string()
+      .min(4, "password needs to be at least 4 characters long"),
+    confirmPassword: z.string(),
+  })
+  .refine((val) => val.password === val.confirmPassword, {
+    path: ["confirmPassword"],
+    error: "Passwords do not match",
+  });
 
 // component
 export function RegisterForm() {
@@ -56,4 +65,156 @@ export function RegisterForm() {
       router.refresh();
     },
   });
+
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        myForm.handleSubmit();
+      }}
+    >
+      <FieldSet>
+        {/* name */}
+        <myForm.Field name="name">
+          {(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid;
+
+            return (
+              <Field>
+                <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  type="text"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  aria-invalid={isInvalid}
+                  placeholder=""
+                  autoComplete="off"
+                />
+                {/* errors */}
+                {isInvalid && (
+                  <FieldError
+                    className="text-xs"
+                    errors={field.state.meta.errors}
+                  />
+                )}
+              </Field>
+            );
+          }}
+        </myForm.Field>
+
+        {/* email */}
+        <myForm.Field name="email">
+          {(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid;
+
+            return (
+              <Field>
+                <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  type="email"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  aria-invalid={isInvalid}
+                  placeholder=""
+                  autoComplete="email"
+                />
+                {/* errors */}
+                {isInvalid && (
+                  <FieldError
+                    className="text-xs"
+                    errors={field.state.meta.errors}
+                  />
+                )}
+              </Field>
+            );
+          }}
+        </myForm.Field>
+
+        {/* password */}
+        <myForm.Field name="password">
+          {(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid;
+
+            return (
+              <Field>
+                <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  type="password"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  aria-invalid={isInvalid}
+                  placeholder=""
+                  autoComplete="new-password"
+                />
+                {/* errors */}
+                {isInvalid && (
+                  <FieldError
+                    className="text-xs"
+                    errors={field.state.meta.errors}
+                  />
+                )}
+              </Field>
+            );
+          }}
+        </myForm.Field>
+
+        {/* confirm password */}
+        <myForm.Field name="confirmPassword">
+          {(field) => {
+            const isInvalid =
+              field.state.meta.isTouched && !field.state.meta.isValid;
+
+            return (
+              <Field>
+                <FieldLabel htmlFor={field.name}>Confirm Password</FieldLabel>
+                <Input
+                  id={field.name}
+                  name={field.name}
+                  type="password"
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  aria-invalid={isInvalid}
+                  placeholder=""
+                  autoComplete="new-password"
+                />
+                {/* errors */}
+                {isInvalid && (
+                  <FieldError
+                    className="text-xs"
+                    errors={field.state.meta.errors}
+                  />
+                )}
+              </Field>
+            );
+          }}
+        </myForm.Field>
+
+        <Field orientation="horizontal" className="mt-5">
+          <myForm.Subscribe selector={(state) => [state.isSubmitting] as const}>
+            {([isSubmitting]) => {
+              return (
+                <Button type="submit" disabled={isSubmitting}>
+                  Register
+                  {isSubmitting && <Spinner />}
+                </Button>
+              );
+            }}
+          </myForm.Subscribe>
+        </Field>
+      </FieldSet>
+    </form>
+  );
 }
